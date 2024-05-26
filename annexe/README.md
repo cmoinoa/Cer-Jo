@@ -1,7 +1,11 @@
+----------------------------------------------------------------------------------------------------------------------------
+
 Projet d'info : CER-JO
 
 Ce projet en C permet de gérer et d'analyser les performances de différents athlètes dans plusieurs épreuves sportives.
 Le programme permet d'enregistrer des temps, de consulter les performances et d'afficher les statistiques de chaque athlète.
+
+----------------------------------------------------------------------------------------------------------------------------
 
 Fonctionnalités :
 
@@ -15,5 +19,9 @@ Fonctionnalités :
 
 -Un interface dynamique et joli.
 
+----------------------------------------------------------------------------------------------------------------------------
+
 Contributeurs : 
 Noa FELIOT-BERTRAND, Lucas LIMA, Lorenzo CRUZ
+
+----------------------------------------------------------------------------------------------------------------------------
