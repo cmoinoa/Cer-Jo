@@ -81,7 +81,7 @@ int choixepreuve(){
              "Marathon\n\nChoix : ");
       scanf("%d", &choix);
         if (choix < 1 || choix > 4) {
-          printf("\n-------------------------------\n\n\033[0;31m# Erreur de saisie\033[0m\n");
+          printf("\n\n-------------------------------\n\n\033[0;31m# Erreur de saisie\033[0m\n");
           clear();
           testchoix = 1;
         }
@@ -128,11 +128,11 @@ FILE *fichier = fopen("relais", "r");
 }
 
 //fonction qui renvoie la moyenne des valeurs d'un tableau
-float t_moyenne(float *temps, int taille) {//calcule la moyenne des temps
+float t_moyenne(float * tab_temps, int taille) {//calcule la moyenne des temps
   if (taille == 0) return 0;
     float somme = 0;
     for (int i = 0; i < taille; i++) {
-        somme += temps[i];
+        somme += tab_temps[i];
   }
   return somme / taille;
 }
@@ -195,11 +195,12 @@ float *tris_stats(char nom[nb_sportif][25], int athlete, int epreuve, int *taill
 
 //met dans un tableau toute les temps selon la date choisis d'un athlete
 float *tris_stats_date(char nom[nb_sportif][25], int athlete, int *taille_tab,
-                       int mois, int jour) {
+                       int mois, int jour, int cas, int epreuve) {
+  char tabepreuve[5][10] = {"100m", "400m", "5000m", "Marathon", "Relais"};
   int mois_temp, jour_temp;
   int maxligne = 100;
   char ligne[100];
-  char mot2[25];
+  char mot[25];
   float temps;
   float *tab_valeur = malloc(sizeof(float) * maxligne);
   int nb_sportif_lignes = 0;
@@ -211,22 +212,71 @@ float *tris_stats_date(char nom[nb_sportif][25], int athlete, int *taille_tab,
     }
 
     while (fgets(ligne, sizeof(ligne), fichier)) {
-        if (sscanf(ligne, "24/%d/%d %s %f", &mois_temp, &jour_temp, mot2, &temps) == 4) {
+        if (sscanf(ligne, "24/%d/%d %s %f", &mois_temp, &jour_temp, mot, &temps) == 4) {
             if (mois_temp == mois && jour_temp == jour) {
-                tab_valeur[nb_sportif_lignes] = temps;
-                nb_sportif_lignes++;
+                if (cas == 1) {
+                    if (strcmp(mot, tabepreuve[epreuve]) == 0) {
+                        tab_valeur[nb_sportif_lignes] = temps;
+                        nb_sportif_lignes++;
+                    }
+                } else {
+                    tab_valeur[nb_sportif_lignes] = temps;
+                    nb_sportif_lignes++;
+                }
             }
         }
     }
     fclose(fichier);
     tab_valeur = realloc(tab_valeur, sizeof(float) * nb_sportif_lignes);
+  if (tab_valeur == NULL && nb_sportif_lignes > 0) {
+      perror("Erreur de réallocation de mémoire pour tab_valeur");
+      exit(1);
+  }
     *taille_tab = nb_sportif_lignes;
     return tab_valeur;
 }
 
+//permet de voir la progression d'un athelte entre 2 dates dans une epreuve précise
+void progression(char nom[nb_sportif][25], int athlete, int epreuve) {
+    char tabepreuve[5][10] = {"100m", "400m", "5000m", "Marathon", "Relais"};
+    int mois, mois2, jour, jour2;
+    int taille_tab1 = 0;
+    int taille_tab2 = 0;
+
+    printf("\n-------------------------------\n");
+
+    choixdate(&mois, &jour);
+    choixdate(&mois2, &jour2);
+
+    float *tab1 = tris_stats_date(nom, athlete, &taille_tab1, mois, jour, 1, epreuve);
+    float *tab2 = tris_stats_date(nom, athlete, &taille_tab2, mois2, jour2, 1, epreuve);
+
+    if (taille_tab1 == 0 || taille_tab2 == 0) {
+        printf("\n-------------------------------\n\n\033[0;31m# Pas de temps trouvé par rapport au critéres donnés\033[0m\n");
+        performance(nom);
+    } else {
+        float moyenne1 = t_moyenne(tab1, taille_tab1);
+        printf("\n%.2f", moyenne1);
+        float moyenne2 = t_moyenne(tab2, taille_tab2);
+        printf("\n%.2f", moyenne2);
+
+        char signe;
+        if (moyenne2 - moyenne1 > 0) {
+            signe = '+';
+        } else {
+            signe = '\0';
+        }
+
+        printf("\n-------------------------------\n\nDifférence de temps de %s entre le %d/%d et le %d/%d au %s : %c%.2fs\n", nom[athlete], mois, jour, mois2, jour2, tabepreuve[epreuve], signe, moyenne2 - moyenne1);
+
+        free(tab1);
+        free(tab2);
+    }
+}
+
 //affiche les détailles des performances des sportifs
 void performance(char nom[nb_sportif][25]) {
-  int choix, choix2, choix3, mois, jour, i;
+  int choix, choix2, choix3, choix4, mois, jour, i;
   int taille_max = 0;
   int *taille_tab = &taille_max;
     do {
@@ -242,13 +292,23 @@ void performance(char nom[nb_sportif][25]) {
         fseek(fichier, 0, SEEK_END); // Se déplace à la fin du fichier
         long taille = ftell(fichier); // Vérifie si le fichier est vide
         if (taille == 0) {
-            printf("\n-------------------------------\n\n\n\n\033[0;31m# Pas d'entrainement en mémoire\033[0m\n\n\n");
+            printf("\n-------------------------------\n\n\033[0;31m# Pas d'entrainement en mémoire\033[0m\n");
             fclose(fichier);
             menu(nom);
         }
         fclose(fichier);
-
     } while (i > 0);
+
+  printf("\n-------------------------------\n\n1 : Statistiques global\n2 : Progression de l'athlete\n\nChoix : ");
+  scanf("%d", &choix4);
+  
+if(choix4==2){
+  printf("\n-------------------------------\n\nCette option vous permet de voir la différence de temps (positive ou négative) d'un athlete dans une épreuve entre 2 dates\n");
+  int epreuve = choixepreuve();
+  progression(nom, choix-1, epreuve-1);
+}
+
+else if(choix4==1){
     printf("\n-------------------------------\n\n1 : Par épreuve\n2 : Par date\n\nChoix : ");
     scanf("%d", &choix3);
     if (choix3 == 1) {
@@ -268,15 +328,15 @@ void performance(char nom[nb_sportif][25]) {
 
         char tabepreuve[5][10] = {"100m", "400m", "5000m", "Marathon", "Relais"};
         float *stats = tris_stats(nom, choix - 1, choix2 - 1, taille_tab);
-        printf("\n-------------------------------\n\nStatistique de %s au %s : \n",
-               nom[choix - 1], tabepreuve[choix2 - 1]);
         if (taille_max > 0) {
+          printf("\n-------------------------------\n\nStatistique de %s au %s : \n",
+             nom[choix - 1], tabepreuve[choix2 - 1]);
             printf("\n\nMeilleur temps : %.2fs\nPire temps : %.2fs\nTemps moyen : %.2fs\n",
                    stats[0], stats[taille_max - 1], t_moyenne(stats, taille_max));
             free(stats);
             menu(nom);
         } else {
-            printf("\n-------------------------------\n\n\n\n\033[0;31m# Aucun temps trouvé pour l'épreuve spécifiée.\033[0m\n");
+            printf("\n-------------------------------\n\n\033[0;31m# Aucun temps trouvé pour l'épreuve spécifiée.\033[0m\n");
             free(stats);
             menu(nom);
         }
@@ -288,7 +348,7 @@ void performance(char nom[nb_sportif][25]) {
                    "(mois/jour) : ");
             scanf("%d/%d", &mois, &jour);
             if ((mois > 0 && mois <= 12) && (jour > 0 && jour <= 31)) {
-                float *stats = tris_stats_date(nom, choix - 1, taille_tab, mois, jour);
+                float *stats = tris_stats_date(nom, choix - 1, taille_tab, mois, jour, 0, 0);
                 if (taille_max > 0) {
                     printf("\n-------------------------------\n\nStatistique de %s le "
                            "24/%d/%d : \n",
@@ -299,7 +359,7 @@ void performance(char nom[nb_sportif][25]) {
                     free(stats);
                     menu(nom);
                 } else {
-                    printf("\n-------------------------------\n\n\n\n\033[0;31m# Aucun temps trouvé la date spécifiée.\033[0m\n\n\n");
+                    printf("\n-------------------------------\n\n\033[0;31m# Aucun temps trouvé la date spécifiée.\033[0m\n");
                     free(stats);
                     menu(nom);
                 }
@@ -310,6 +370,13 @@ void performance(char nom[nb_sportif][25]) {
             }
         } while (verif == 1);
     }
+  }
+  
+  else{
+    clear();
+    printf("\n-------------------------------\n\n\033[0;31m# Erreur de saisie\033[0m\n");
+    statistique(nom);
+  }
 }
 
 //selectionne les meilleurs sportifs par rapport à leurs performances
@@ -682,7 +749,7 @@ void creafichier() {
   menu(nom);
 }
 
-//écran d'acceuil
+//affichage d'acceuil
 int main() {
   srand(time(NULL));
   printf("\n\033[0;37m------------------------------------------\n");
