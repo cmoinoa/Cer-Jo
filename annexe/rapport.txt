@@ -1,4 +1,4 @@
-                    Projet CER-JO par Noa,Lorenzo et Lucas                        CY-TECH
+                   Projet CER-JO par Noa,Lorenzo et Lucas                        CY-TECH
 
 Dans ce projet, l'objectif était de développer un programme permettant à l’entraineur de l’équipe d’athlétisme de France de suivre l’évolution des performances de ses sportifs.
 
@@ -22,4 +22,8 @@ Lors de l’exécution du programme, un entraineur doit pouvoir :
 
 Problèmes rencontrés : 
 
-  Durant la construction de notre programme, la principale difficulté fut la gestion des fichier et pouvoir manipuler leurs données. Après quelques réunions a essayé de comprendre les nombreux obstacle auquel nous nous sommes heurté, tous les problèmes notamment au niveau du code se sont assez vite résolus. Des petites erreurs d'inattention ont tout de mêmes fait leurs appararitions mais rien de bien méchant (toujours faire attention aux ; :D ).
+ Durant la construction de notre programme, la principale difficulté fut la gestion des fichier et pouvoir manipuler leurs données. Après quelques réunions a essayé de comprendre les nombreux obstacle auquel nous nous sommes heurté, tous les problèmes notamment au niveau du code se sont assez vite résolus. Des petites erreurs d'inattention ont tout de mêmes fait leurs appararitions mais rien de bien méchant (toujours faire attention aux ; :D ).
+
+Organisation :
+
+  Plusieurs sessions "organisation" ont été nécessaire pour se repartir le travail et évidemment discuter de comment et de quoi le programme allait se composer. Le début a été un peu plus long que prévu après une mauvaise compréhension du sujet mais qui fut rapidement régler par un moment de discussion tous ensemble. A partir de ce moment-la, nous nous réunissions assez souvent pour avancer ensemble sur différentes fonctions et problèmes du programme. Cela pouvait aller de grande sessions de travail communes à des recherches et des avancements personnels sur plusieurs tâches pour ensuite les mettre en commun. Nous avons principalement travailler sur Replit pour permettre ainsi d'avoir un programme avec plusieurs fichiers où chacun pouvait avoir accès au même programme n'importe quand pour pouvoir travailler dessus tous ensemble ou chacun de son côté.
