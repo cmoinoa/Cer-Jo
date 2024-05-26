@@ -1,1 +1,25 @@
+                    Projet CER-JO par Noa,Lorenzo et Lucas                        CY-TECH
 
+Dans ce projet, l'objectif était de développer un programme permettant à l’entraineur de l’équipe d’athlétisme de France de suivre l’évolution des performances de ses sportifs.
+
+Le programme permet donc de gérer 5 épreuves différentes : le 100m, le 400m, le 500m, le marathon et le relais 4*400.
+
+Lors de l’exécution du programme, un entraineur doit pouvoir :
+  - Entrer et sauvegarder les informations/résultats d’un nouvel
+    entrainement
+  - Consulter l’historique des entrainements : par athlète et/ou par épreuve
+    et/ou par date.
+  - Consulter des statistiques de performances de chaque athlète.
+• Statistiques sur les athlètes : l’entraineur doit pouvoir consulter
+  - Un résumé des performances d’un athlète : le meilleur, le pire temps et
+    la moyenne d’un athlète pour une épreuve donnée.
+  - Qui envoyer au JO : quels sont les trois meilleurs athlètes pour une
+    discipline (meilleurs temps moyen).
+  - Progression de l’athlète : afficher la différence de temps d’un athlète
+    pour une même épreuve entre deux dates.
+• L’évolution des performances :
+    afin de pouvoir observer la progression des athlètes, on aimerait pouvoir indiquer la différence de temps pour une même épreuve entre deux entrainements (entre deux dates).
+
+Problèmes rencontrés : 
+
+  Durant la construction de notre programme, la principale difficulté fut la gestion des fichier et pouvoir manipuler leurs données. Après quelques réunions a essayé de comprendre les nombreux obstacle auquel nous nous sommes heurté, tous les problèmes notamment au niveau du code se sont assez vite résolus. Des petites erreurs d'inattention ont tout de mêmes fait leurs appararitions mais rien de bien méchant (toujours faire attention aux ; :D ).
