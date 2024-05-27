@@ -66,7 +66,7 @@ int choixsportif(char nom[nb_sportif][25], int cas){
             clear();
         }
     } while (verif > 0);
-    
+
   return choix;
 }
 
@@ -138,14 +138,42 @@ float t_moyenne(float * tab_temps, int taille) {//calcule la moyenne des temps
 }
 
 //procédure supplémentaire a tri_tableau
-void echanger(MoyenneSportif * a, MoyenneSportif * b) {
+void echanger(float * a, float * b) {
+  float temp = *a;
+  *a = *b;
+  *b = temp;
+}
+
+//procédure supplémentaire a tri_tableau
+void echanger_moyenne(MoyenneSportif * a, MoyenneSportif * b) {
   MoyenneSportif temp = *a;
   *a = *b;
   *b = temp;
 }
 
+float * tri_tableau(float tab[], int taille) {
+  float *tableau_trie = malloc(taille * sizeof(float));
+    if (tableau_trie == NULL) {
+        printf("\n-------------------------------\n\n\033[0;31m# Erreur  d'allocation de mémoire\033[0m\n");
+        exit(1);
+    }
+      for (int i = 0; i < taille; i++) {
+          tableau_trie[i] = tab[i];
+      }
+      for (int i = 0; i < taille - 1; i++) {
+          int min_index = i;
+          for (int j = i + 1; j < taille; j++) {
+              if (tableau_trie[j] < tableau_trie[min_index]) {
+                  min_index = j;
+              }
+          }
+      echanger(&tableau_trie[min_index], &tableau_trie[i]);
+    }
+  return tableau_trie;
+}
+
 //calcul du plus petit au plus grand un tableau
-MoyenneSportif * tri_tableau(MoyenneSportif tab[], int taille) {
+MoyenneSportif * tri_tableau_moyenne(MoyenneSportif tab[], int taille) {
   MoyenneSportif *tableau_trie = malloc(taille * sizeof(MoyenneSportif));
     if (tableau_trie == NULL) {
         printf("\n-------------------------------\n\n\033[0;31m# Erreur  d'allocation de mémoire\033[0m\n");
@@ -161,7 +189,7 @@ MoyenneSportif * tri_tableau(MoyenneSportif tab[], int taille) {
                   min_index = j;
               }
           }
-      echanger(&tableau_trie[min_index], &tableau_trie[i]);
+      echanger_moyenne(&tableau_trie[min_index], &tableau_trie[i]);
     }
   return tableau_trie;
 }
@@ -190,7 +218,8 @@ float *tris_stats(char nom[nb_sportif][25], int athlete, int epreuve, int *taill
     fclose(fichier);
     tab_valeur = realloc(tab_valeur, sizeof(float) * nb_sportif_lignes);
     *taille_tab = nb_sportif_lignes;
-    return tab_valeur;
+  float * tab_valeur_trie = tri_tableau(tab_valeur, nb_sportif_lignes);
+    return tab_valeur_trie;
 }
 
 //met dans un tableau toute les temps selon la date choisis d'un athlete
@@ -232,8 +261,10 @@ float *tris_stats_date(char nom[nb_sportif][25], int athlete, int *taille_tab,
       perror("Erreur de réallocation de mémoire pour tab_valeur");
       exit(1);
   }
+
     *taille_tab = nb_sportif_lignes;
-    return tab_valeur;
+  float * tab_valeur_trie = tri_tableau(tab_valeur, nb_sportif_lignes);
+    return tab_valeur_trie;
 }
 
 //permet de voir la progression d'un athelte entre 2 dates dans une epreuve précise
@@ -301,7 +332,7 @@ void performance(char nom[nb_sportif][25]) {
 
   printf("\n-------------------------------\n\n1 : Statistiques global\n2 : Progression de l'athlete\n\nChoix : ");
   scanf("%d", &choix4);
-  
+
 if(choix4==2){
   printf("\n-------------------------------\n\nCette option vous permet de voir la différence de temps (positive ou négative) d'un athlete dans une épreuve entre 2 dates\n");
   int epreuve = choixepreuve();
@@ -371,7 +402,7 @@ else if(choix4==1){
         } while (verif == 1);
     }
   }
-  
+
   else{
     clear();
     printf("\n-------------------------------\n\n\033[0;31m# Erreur de saisie\033[0m\n");
@@ -388,7 +419,7 @@ void selec_jo(char nom[nb_sportif][25]) {
   int *taille_tab = &taille_max;
   MoyenneSportif tab_moyenne[nb_sportif];
   int testchoix = 1;
-  
+
     while (testchoix == 1) {
         testchoix = 0;
         printf("\n-------------------------------\n\nChoix de l'épreuve : \n\n1 : 100m\n2 : 400m\n3 : 5000m\n4 : Marathon\n5 : Relais\n\nChoix : ");
@@ -409,7 +440,7 @@ void selec_jo(char nom[nb_sportif][25]) {
         free(stats);
     }
 
-    MoyenneSportif *tab_moyenne_trie = tri_tableau(tab_moyenne, nb_sportif);
+    MoyenneSportif *tab_moyenne_trie = tri_tableau_moyenne(tab_moyenne, nb_sportif);
 
     int taille_top = 0;
     for (int i = 0; i < nb_sportif; i++) {
@@ -422,16 +453,16 @@ void selec_jo(char nom[nb_sportif][25]) {
     if (taille_top < 3) {
         printf("\n-------------------------------\n\n\033[0;31m# Pas assez d'athlete assigné à cette épreuve pour y établir un top 3\033[0m\n");
     } else {
-      
+
         int i = 0;
         int j = 0;
         printf("\n-------------------------------\n\n");
         printf("Top 3 du %s :\n", tabepreuve[choix-1]);
-      
+
         while (i < 3) {
           if(tab_moyenne_trie[j].moyenne != -1){
             printf("\n%d : %s avec une moyenne de %.2fs\n", i + 1, nom[tab_moyenne_trie[j].index], tab_moyenne_trie[j].moyenne);
-          
+
             i++;
           }
           j++;
@@ -475,7 +506,7 @@ void h_athlete(char nom[nb_sportif][25]) {
 
     if (fichier == NULL) {
     printf("\n-------------------------------\n\n\033[0;31m# Erreur : Impossible d'ouvrir le fichier.\033[0m\n");
-             
+
           }
 
      fseek(fichier, 0, SEEK_END);
@@ -518,7 +549,7 @@ void relais(char nom[nb_sportif][25]) {
   }
 
   temps = choixtemps(0);
-  
+
   FILE *fichier = NULL;
   fichier = fopen("relais", "a");//crée un fichier en mode ajout
   if (fichier == NULL) {
@@ -529,10 +560,10 @@ void relais(char nom[nb_sportif][25]) {
   for (int i = 0; i < nb_sportif; i++) {
     printf("%d : %s\n", i + 1, nom[i]);//affiche les sportifs
   }
-  
+
   int verifdiff = 0;
   int listerelais[4];
-  
+
   for (int i = 0; i < 4; i++) {
     do {
       verifdiff = 0;
@@ -545,10 +576,10 @@ void relais(char nom[nb_sportif][25]) {
         verifdiff = 1;
         printf("\n-------------------------------\n\n\033[0;31m# Erreur de saisie\033[0m\n");
       }
-      
+
       prenom--;
       listerelais[i] = prenom;
-      
+
       for (int j = 0; j < i; j++) {
         if (listerelais[j] == listerelais[i]) {//compare les athlète
           printf("\n-------------------------------\n\n\033[0;31m# Athlete déjà séléctionné, choississez-en un différent\033[0m\n");
@@ -586,7 +617,7 @@ void maj_athlete(char nom[nb_sportif][25], int athlete, int epreuve, int mois,
     menu(nom);
   }
   }
-  
+
 }
 
 //configure les entrainement
